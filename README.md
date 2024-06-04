@@ -69,8 +69,49 @@ To confirm that everything went smoothly, visit your server's public IP address 
 
 ## 5. Create Virtual Host For Your Website
 
-When using Apache, you can create virtual hosts which basically divides the web server into seperate blocks to encapsulate configuration details and host more than one domain from a single server. 
+When using Apache, you can create virtual hosts which divides the web server into seperate blocks to encapsulate configuration details and host more than one domain from a single server. 
+
+Start by creating a directory for your domain
 
 ```
+sudo mkdir /var/www/my_domain
+```
 
+Now assign the ownership of that directory with the ```$USER``` environment variable, which will reference your current system user
+
+```
+sudo chown -R $USER:$USER /var/www/my_domain
+```
+
+Then open a new configuration file in Apache's ```sites-available``` directory using ```nano``` command
+
+```
+sudo nano /etc/apache2/sites-available/my_domain.conf
+```
+
+The above command will create a blank file. Next step is to add the following configuration for your domain
+
+```
+<VirtualHost *:80>
+    ServerName my_domain
+    ServerAlias www.my_domain
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/my_domain
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+Save and close the file when you are done by using ```ctrl+X``` then ```Y``` then ```Enter```
+
+Now, we will enable the new virtual host that was just created
+
+```
+sudo a2ensite my_domain
+```
+
+Now reload the Apache server with
+
+```
+sudo systemctl reload apache2
 ```
